@@ -31,7 +31,7 @@ import os
 import pyregion
 
 # Defination of point source class
-class pointsource:
+class PointSource:
 
     def __init__(self,core=(0,0),axis=(0,0),peak=0,ang = 0):
         self.core_x,self.core_y = core
