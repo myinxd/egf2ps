@@ -30,7 +30,7 @@ import numpy as np
 # custom designed
 
 # Defination of class
-class filter:
+class Filter:
     # Inital of parameters
     scale_x = 0
     scale_y = 0
