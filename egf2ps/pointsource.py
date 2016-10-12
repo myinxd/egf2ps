@@ -96,5 +96,57 @@ def mat2reg(ps,outfile,pstype = 'elp'):
             ps_str = 'box(' + str(ps[i,0])+','+ str(ps[i,1])+','+str(ps[i,2])+','+str(ps[i,3])+',0)\n'
             reg.write(ps_str)
 
+def compare(ps,ps_ref):
+    """
+    Compare detected ps with the real one or reference
 
+    Parameters
+    ----------
+    ps: np.ndarray
+        Detected point source list
+    ps_ref: np.ndarray
+        Referenced point source list
+
+    Returns
+    -------
+    num_same: int
+        Number of same PS
+    cord_x,cord_y: list
+        Coordinates of the same PS
+    err_rate: float
+        Error rate
+    """
+
+    # Init
+    num_same = 0
+    err_rate = 0.0
+    cord_x = []
+    cord_y = []
+
+    # Extract coordinates of ps and ps_ref
+    ps_x = list(ps[:,1])
+    ps_y = list(ps[:,2])
+    ps_ref_x = list(ps_ref[:,1])
+    ps_ref_y = list(ps_ref[:,2])
+
+    # Compare
+    i = 1
+    while  i <= len(ps_ref_x):
+        j = 1
+        while j <= len(ps_ref_x):
+            d = np.sqrt((ps_x[j]-ps_ref_x[i])**2 + (ps_y[j]-ps_ref_y[i])**2)
+            if d <= 5:
+                num_same += 1
+                cord_x.append(ps_x[j])
+                cord_y.append(ps_y[j])
+                ps_x.remove(ps_x[j])
+                ps_y.remove(ps_y[j])
+                break
+            j += 1
+        i += 1
+
+    len_ps = ps.shape[0]
+    err_rate = (abs(len_ps - len(ps_ref_x)) + len(ps_ref_x) - num_same)/ len(ps_ref_x)
+
+    return num_same,err_rate,cord_x,cord_y
 
