@@ -18,7 +18,7 @@ Above all, to handle this difficulties, precisely detect and extract the point s
 The mainly scripts for our elliptical Gaussian filters to detect point sources (egf2ps) is provided, and we very welcome you to utlize them in your works. The license is also discribed and listed at the end of the readme.
 
 ## How to use it?
-The scrips are prepared under grammar of the python3, and some basic official modules and astrophycial modules are required. They are listed as follows,
+The scrips are prepared under grammar of the [python3](https://en.wikipedia.org/wiki/Python_(programming_language)), and some basic official modules and astrophycial modules are required. They are listed as follows,
 
 - NumPy, SciPy : process with ndarray formation data and do the concolusion calculations
 - astropy, pyregion : process on the astronomical image files (.fits) and region files (.reg).
