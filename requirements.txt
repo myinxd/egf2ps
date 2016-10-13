@@ -1,0 +1,8 @@
+# Requirements for the egf2ps package
+
+numpy
+scipy
+matplotlib
+astropy
+pyregion
+pandas
