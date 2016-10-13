@@ -32,7 +32,7 @@ setup(
     url=pkg.__url__,
     license=pkg.__license__,
     classifiers=[
-        "Development Status :: 1 - Pre-Alpha",
+        "Development Status :: 2 - Pre-Alpha",
         "Environment :: Console",
         "Intended Audience :: Science/Research",
         "Natural Language :: English",
