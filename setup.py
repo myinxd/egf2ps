@@ -31,6 +31,7 @@ setup(
     author_email=pkg.__author_email__,
     url=pkg.__url__,
     license=pkg.__license__,
+    keywords=pkg.__keywords__,
     classifiers=[
         "Development Status :: 2 - Pre-Alpha",
         "Environment :: Console",
@@ -40,7 +41,7 @@ setup(
         "Programming Language :: Python :: 3 :: Only",
         "Programming Language :: Python :: 3.4",
         "Programming Language :: Python :: 3.5",
-        "Topic :: Scientific/Engineering :: Signal processing",
+        "Topic :: Scientific/Engineering :: Image Recognition ",
     ],
     packages=find_packages(exclude=["docs","tests"]),
     scripts=[
