@@ -11,6 +11,7 @@ __version__ = "0.0.1"
 __author__ = "Zhixian MA"
 __author_email__ = "zxma_sjtu@qq.com"
 __license__ = "MIT"
+__keywords__ = "point_source filter reognition"
 __copyright = "Copyright (c) 2016 Zhixian MA"
 __url__ = "https://github.com/myinxd/egf2ps"
 __description__ = ("Elliptical Gaussian filters to detect point source in X-ray astronomical images")
