@@ -15,7 +15,7 @@ from functools import reduce
 from configobj import ConfigObj, ConfigObjError, flatten_errors
 from validate import Validator
 
-from errors import ConfigError
+from .errors import ConfigError
 
 class ConfigsProcesser:
     """Process on the configurations"""
