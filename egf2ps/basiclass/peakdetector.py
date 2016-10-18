@@ -38,27 +38,17 @@ from ..utils import utils
 
 # Defination of class
 class PeakDetector():
-    def __init__(self,Configs,egfilter=None):
+    def __init__(self,Configs,imgmat,egfilter):
         """Initialization of parameters"""
         self.Configs = Configs
+        self.imgmat = imgmat
         self.egfilter = egfilter
-        self.neighbors = max(self.egfilter.scale_x,self.egfilter.scale_y)
         self.peaklist = []
         self._get_configs()
-        self._read_image()
 
     def _get_configs(self):
         """Get configurations from the Configs"""
-        self.imgpath = self.Configs.getn_value("input/imgpath")
         self.threshold = self.Configs.getn_value("peaks/threshold")
-
-    def _read_image(self):
-        """
-        Read image from provided imgpath, the type of image shall be judged.
-        The tool img2mat in utils is utlized.
-        """
-        imgmat = utils.img2mat(self.imgpath)
-        self.imgmat = imgmat
 
     def smooth(self):
         """
@@ -79,6 +69,7 @@ class PeakDetector():
         cord_x = []
         cord_y = []
         rows,cols = self.imgsmooth.shape
+        self.neighbors = max(self.egfilter.scale_x,self.egfilter.scale_y)
         # Normalize
         max_value = self.imgsmooth.max()
         min_value = self.imgsmooth.min()
@@ -90,7 +81,6 @@ class PeakDetector():
             peak_max = imgnorm.max()
             if peak_max >= self.threshold:
                 peak_y,peak_x = np.where(imgnorm==peak_max)
-                print(peak_y)
                 for i in range(len(peak_x)):
                     # Judge and fill
                     mask_x = np.arange(peak_x[i]-self.neighbors,peak_x[i]+self.neighbors+1,1)
@@ -121,7 +111,7 @@ class PeakDetector():
         # Gen pslist
         radius_x = self.egfilter.radius_x
         radius_y = self.egfilter.radius_y
-        angle = self.egfilter.angle
+        angle = self.egfilter.angle / np.pi * 180
         for i in range(numps):
             ps = PointSource(core=(self.peaklist[1][i],self.peaklist[2][i]),
                              axis=(radius_x,radius_y),peak=self.peaklist[0][i],
