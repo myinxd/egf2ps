@@ -11,9 +11,35 @@ images.
 
 import os
 import sys
-import argparse
-import logging
 
-import numpy as np
+from egf2ps.configs import Configs
+from egf2ps.utils import utils
+from egf2ps.detector import Detector
 
-from egf2ps.configs import configs, validate_configs
+
+def main(argv):
+    # Get configurations
+    confpath = argv[0]
+    try:
+        configs = Configs('test.conf')
+    except IOError:
+         sys.exit("Configurations can't be loaded.")
+
+    # Detect ps
+    ps_detector = Detector(configs)
+    pslist = ps_detector.get_final()
+
+    # Save as region file
+    dirname = configs.getn_value('output/dirname')
+    filename = configs.getn_value('output/regpath')
+    savepath = os.path.join(dirname,filename)
+    utils.mat2reg(pslist,savepath)
+
+    # Compare
+    refpath = configs.getn_value('input/refpath')
+    if refpath != "":
+       ps_detector.get_performance(pslist)
+
+
+if __name__ == "__main__":
+    main(sys.argv[0:])
