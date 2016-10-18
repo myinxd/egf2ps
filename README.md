@@ -25,6 +25,17 @@ The scrips are prepared under grammar of the [python3](https://en.wikipedia.org/
 - matplotlib: display results and read or save images
 - pandas: save the PS list as `csv` files
 
+The simplest way to use the egf2ps package to detect point sources is to install it, and process at the command line.
+- Install
+```sh
+   $ cd egf2ps
+   $ pip install --user .
+```
+- Run detection
+```sh
+   $ egf2ps <confpath>
+```
+The configuration file holding `input`,`output`,`filter`,`peaks`,and `snr` pararmeters should be provided, a [template](https://github.com/myinxd/egf2ps/egf2ps/configs/confspec.conf) can be referred. 
 ## Author
 - Zhixian MA <`zxma_sjtu(at)qq.com`>
 
