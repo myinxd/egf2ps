@@ -38,7 +38,7 @@ from ..utils import utils
 
 # Defination of class
 class PeakDetector():
-    def __init__(self,Configs,egfilter):
+    def __init__(self,Configs,egfilter=None):
         """Initialization of parameters"""
         self.Configs = Configs
         self.egfilter = egfilter
@@ -46,7 +46,6 @@ class PeakDetector():
         self.peaklist = []
         self._get_configs()
         self._read_image()
-        self.smooth()
 
     def _get_configs(self):
         """Get configurations from the Configs"""
@@ -73,15 +72,17 @@ class PeakDetector():
 
     def locate_peaks(self):
         """Locate peaks with respect to the threshold"""
+        # Smooth
+        self.smooth()
         # Init
         peaks = []
         cord_x = []
         cord_y = []
-        rows,cols = self.imgmat.shape
+        rows,cols = self.imgsmooth.shape
         # Normalize
-        max_value = self.imgmat.max()
-        min_value = self.imgmat.min()
-        imgnorm = (self.imgmat - min_value)/(max_value-min_value)
+        max_value = self.imgsmooth.max()
+        min_value = self.imgsmooth.min()
+        imgnorm = (self.imgsmooth - min_value)/(max_value-min_value)
         self.imgnorm = imgnorm.copy()
         # Find peaks
         flag = 1
@@ -112,6 +113,8 @@ class PeakDetector():
     def get_pslist(self):
         """Get potential point source list
         """
+        # Get peaklist
+        self.locate_peaks()
         # Init
         pslist = []
         numps = len(self.peaklist[0])
