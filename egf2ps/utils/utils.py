@@ -112,9 +112,9 @@ def compare(ps,ps_ref):
 
     # Compare
     i = 1
-    while  i <= len(ps_ref_x):
+    while  i <= len(ps_ref_x) - 1:
         j = 1
-        while j <= len(ps_ref_x):
+        while j <= len(ps_ref_x) - 1:
             d = np.sqrt((ps_x[j]-ps_ref_x[i])**2 + (ps_y[j]-ps_ref_y[i])**2)
             if d <= 5:
                 num_same += 1
@@ -150,11 +150,11 @@ def img2mat(imgpath):
         img_mat = img[0].data
     else:
         try:
-            img_mat = imread(imgpath,flattern=True,mode='L')
+            img_mat = imread(imgpath,mode='L')
         except IOError:
             sys.exit("The image can't be loaded.")
         img_mat = np.array(img_mat,dtype=float)/255
-
+    
     return img_mat
 
 def cluster(pslist,dist=5,itertime=3):
@@ -168,28 +168,28 @@ def cluster(pslist,dist=5,itertime=3):
         Time of iteration
     """
     # Init
-    rowIdx = pslist[:,2].tolist()
-    colIdx = pslist[:,1].tolist()
-    rowAxis = pslist[:,4].tolist()
-    colAxis = pslist[:,3].tolist()
-    ang = pslist[:,5].tolist()
-    peaks = pslist[:,6].tolist()
+    rowIdx = pslist[:,1].tolist()
+    colIdx = pslist[:,0].tolist()
+    rowAxis = pslist[:,3].tolist()
+    colAxis = pslist[:,2].tolist()
+    ang = pslist[:,4].tolist()
+    peaks = pslist[:,5].tolist()
 
     # Clustering
-    for t in len(itertime):
-        i = 1
-        while i <= len(rowIdx):
+    for t in range(itertime):
+        i = 0
+        while i <= len(colIdx) - 1:
             j = i + 1
             xs = colIdx[i]
             ys = rowIdx[i]
-            temp_x = xs
-            temp_y = ys
-            temp_peak = peaks[i]
-            temp_ra = rowAxis[i]
-            temp_ca = colAxis[i]
-            temp_ang = ang[i]
-            while j <= len(rowIdx):
-                if np.sqrt((temp_x-colIdx[j])**2+(temp_y-rowIdx[j])**2)<=dist:
+            temp_x = [xs]
+            temp_y = [ys]
+            temp_peak = [peaks[i]]
+            temp_ra = [rowAxis[i]]
+            temp_ca = [colAxis[i]]
+            temp_ang = [ang[i]]
+            while j <= len(colIdx) - 1:
+                if np.sqrt((xs-colIdx[j])**2+(ys-rowIdx[j])**2)<=dist:
                     temp_x.append(colIdx[j])
                     temp_y.append(rowIdx[j])
                     temp_ra.append(rowAxis[j])
@@ -207,15 +207,16 @@ def cluster(pslist,dist=5,itertime=3):
                     j = j - 1
                 j = j + 1
             # update
-            rowIdx[i] = int(round(np.mean(temp_x)))
-            colIdx[i] - int(round(np.mean(temp_y)))
+            rowIdx[i] = round(np.mean(temp_y))
+            colIdx[i]  = round(np.mean(temp_x))
             rowAxis[i] = np.mean(temp_ra)
             colAxis[i] = np.mean(temp_ca)
             peaks[i] = np.max(temp_peak)
-            idx = np.where(temp_peak==peaks[i])
+            idx = np.where(temp_peak==peaks[i])[0][0]
             ang[i] = temp_ang[idx]
             i = i + 1
 
     final_list = np.array([colIdx,rowIdx,colAxis,rowAxis,ang,peaks]).transpose()
+
 
     return final_list
