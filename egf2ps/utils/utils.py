@@ -14,7 +14,7 @@ compare:
     Compare detected PS with the references
 img2mat:
     read image from the provided path
-	
+
 References
 ------------
 [1] scipy.ndimage
@@ -105,10 +105,10 @@ def compare(ps,ps_ref):
     cord_y = []
 
     # Extract coordinates of ps and ps_ref
-    ps_x = list(ps[:,1])
-    ps_y = list(ps[:,2])
-    ps_ref_x = list(ps_ref[:,1])
-    ps_ref_y = list(ps_ref[:,2])
+    ps_x = ps[:,0].tolist()
+    ps_y = ps[:,1].tolist()
+    ps_ref_x = ps_ref[:,0].tolist()
+    ps_ref_y = ps_ref[:,1].tolist()
 
     # Compare
     i = 1
@@ -156,3 +156,66 @@ def img2mat(imgpath):
         img_mat = np.array(img_mat,dtype=float)/255
 
     return img_mat
+
+def cluster(pslist,dist=5,itertime=3):
+    """Cluster of potential point sources
+
+    Parameter
+    ---------
+    dist: int
+        Smallest distance between to point sources to be clustered
+    itertime: int
+        Time of iteration
+    """
+    # Init
+    rowIdx = pslist[:,2].tolist()
+    colIdx = pslist[:,1].tolist()
+    rowAxis = pslist[:,4].tolist()
+    colAxis = pslist[:,3].tolist()
+    ang = pslist[:,5].tolist()
+    peaks = pslist[:,6].tolist()
+
+    # Clustering
+    for t in len(itertime):
+        i = 1
+        while i <= len(rowIdx):
+            j = i + 1
+            xs = colIdx[i]
+            ys = rowIdx[i]
+            temp_x = xs
+            temp_y = ys
+            temp_peak = peaks[i]
+            temp_ra = rowAxis[i]
+            temp_ca = colAxis[i]
+            temp_ang = ang[i]
+            while j <= len(rowIdx):
+                if np.sqrt((temp_x-colIdx[j])**2+(temp_y-rowIdx[j])**2)<=dist:
+                    temp_x.append(colIdx[j])
+                    temp_y.append(rowIdx[j])
+                    temp_ra.append(rowAxis[j])
+                    temp_ca.append(colAxis[j])
+                    temp_peak.append(peaks[j])
+                    temp_ang.append(ang[j])
+                    # remove
+                    rowIdx.remove(rowIdx[j])
+                    colIdx.remove(colIdx[j])
+                    rowAxis.remove(rowAxis[j])
+                    colAxis.remove(colAxis[j])
+                    peaks.remove(peaks[j])
+                    ang.remove(ang[j])
+                    # change j
+                    j = j - 1
+                j = j + 1
+            # update
+            rowIdx[i] = int(round(np.mean(temp_x)))
+            colIdx[i] - int(round(np.mean(temp_y)))
+            rowAxis[i] = np.mean(temp_ra)
+            colAxis[i] = np.mean(temp_ca)
+            peaks[i] = np.max(temp_peak)
+            idx = np.where(temp_peak==peaks[i])
+            ang[i] = temp_ang[idx]
+            i = i + 1
+
+    final_list = np.array([colIdx,rowIdx,colAxis,rowAxis,ang,peaks]).transpose()
+
+    return final_list
