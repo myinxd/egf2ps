@@ -35,7 +35,7 @@ The simplest way to use the egf2ps package to detect point sources is to install
 ```sh
    $ egf2ps <confpath>
 ```
-The configuration file holding `input`,`output`,`filter`,`peaks`,and `snr` pararmeters should be provided, a [template](https://github.com/myinxd/egf2ps/egf2ps/configs/confspec.conf) can be referred. 
+The configuration file holding `input`,`output`,`filter`,`peaks`,and `snr` pararmeters should be provided, a [template](https://github.com/myinxd/egf2ps/blob/master/egf2ps/configs/confspec.conf) can be referred. 
 ## Author
 - Zhixian MA <`zxma_sjtu(at)qq.com`>
 
