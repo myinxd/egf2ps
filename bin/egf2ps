@@ -7,39 +7,70 @@
 """
 Elliptical Gaussian filters to detect point sources in X-ray astronomical 
 images.
+
+References
+----------
+[1] fg21sim 
+    https://github.com/liweitianux/fg21sim/blog/master/bin/fg21sim
 """
 
 import os
 import sys
+import argparse
+import logging
 
 from egf2ps.configs import Configs
 from egf2ps.utils import utils
 from egf2ps.detector import Detector
 
-
 def main(argv):
+    parser = argparse.ArgumentParser(
+        description="Elliptical Gaussian filters to detect point sources in X-ray astronomical images.")
+    parser.add_argument("configs", help="Configuration filepath")
+    parser.add_argument("-l", "--log", dest="loglevel", default="INFO",
+                        choices=["DEBUG","INFO","WARNING",
+                        "ERROR","CRITICAL"],
+                        help="Set log level.")
+    parser.add_argument("-L","--logpath",default=None,
+                        help="Filepath for saving log messages.")
+    parser.add_argument("-Q","--quiet",action="store_true",
+                        help="Quietly log messages withoud showing.")
+    args = parser.parse_args()
+
     # Get configurations
+    print("Loading configurations...")
     confpath = argv[0]
     try:
         configs = Configs('test.conf')
     except IOError:
          sys.exit("Configurations can't be loaded.")
+    
+    # Configure logging staff
+    toolname = os.path.basename(sys.argv[0])
+    logger = utils.logManager(args.loglevel,toolname)
 
     # Detect ps
+    logger.name = "DetectPS"
+    logger.info("Detecting point sources...")
     ps_detector = Detector(configs)
     pslist = ps_detector.get_final()
+    logger.info("Detecting point sources done!")    
 
     # Save as region file
+    logger.name = "Save2Reg"
+    logger.info("Saving result to ds9 region file...")
     dirname = configs.getn_value('output/dirname')
     filename = configs.getn_value('output/regpath')
     savepath = os.path.join(dirname,filename)
     utils.mat2reg(pslist,savepath)
+    logger.info("Saving finished!")
 
     # Compare
     refpath = configs.getn_value('input/refpath')
     if refpath != "":
-       ps_detector.get_performance(pslist)
-
+        logger.name = "Compare"
+        logger.info("Making comparisons with the referred PS catalog...")
+        ps_detector.get_performance(pslist)
 
 if __name__ == "__main__":
     main(sys.argv[0:])
