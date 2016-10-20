@@ -13,7 +13,9 @@ mat2reg:
 compare:
     Compare detected PS with the references
 img2mat:
-    read image from the provided path
+    Read image from the provided path
+logManager:
+    Configure logging style <to be strengthed>
 
 References
 ------------
@@ -24,6 +26,7 @@ References
 
 import os
 import sys
+import logging
 import numpy as np
 import pyregion
 from astropy.io import fits
@@ -154,7 +157,7 @@ def img2mat(imgpath):
         except IOError:
             sys.exit("The image can't be loaded.")
         img_mat = np.array(img_mat,dtype=float)/255
-    
+
     return img_mat
 
 def cluster(pslist,dist=5,itertime=3):
@@ -218,5 +221,40 @@ def cluster(pslist,dist=5,itertime=3):
 
     final_list = np.array([colIdx,rowIdx,colAxis,rowAxis,ang,peaks]).transpose()
 
-
     return final_list
+
+def logManager(loglevel="INFO",toolname="egf2ps",appname = ""):
+    """
+    A simple logging manger to configure the logging style.
+
+    Parameters
+    ----------
+    loglevel: str
+       Level of logging, which can be "DEBUG","INFO","WARNING","ERROR",
+       and "CRITICAL". Default as "INFO".
+    toolname: str
+       Name of the tool.
+    appname: str
+       Name of the method or class.
+
+    Reference
+    ---------
+    [1] Reitz, K., and Schlusser, T.
+        "The Hitchhiker's Guide to Python",
+        O'Reilly, 2016.
+    """
+    # Formatter<TODO>
+    formatter = logging.Formatter(
+                    '[%(levelname)s %(asctime)s]'+ toolname +
+                    '--%(name)s: %(message)s')
+    # Set handler
+    handler = logging.StreamHandler()
+    handler.setFormatter(formatter)
+    # Initialize logger
+    logger = logging.getLogger(appname)
+    logger.addHandler(handler)
+    # Set level
+    level = "logging." + loglevel
+    logger.setLevel(eval(level))
+
+    return logger
